@@ -1,0 +1,465 @@
+<include file="Public/head"/>
+<style>
+    input[type=checkbox] {
+        /*zoom:200%;*/
+        margin-left: 16px;
+        margin-right: 16px;
+        -ms-transform: scale(2.5); /* IE */
+        -moz-transform: scale(2.5); /* FireFox */
+        -webkit-transform: scale(2.5); /* Safari and Chrome */
+        -o-transform: scale(2.5); /* Opera */
+    }
+
+    a {
+        color: white;
+        font-weight: bold;
+    }
+
+    a:hover {
+        color: hotpink;
+    }
+
+    .aaa a:link{
+        text-decoration: none
+    }
+
+    .bbb {
+        color: darkred;
+    }
+</style>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p style="">投票名称：{$votelunciinfo.vote_name}，
+                            评审类型：
+                            <if condition="$votelunciinfo['judgetype_id'] eq 1 ">学科组评审
+                                <else/>
+                                医院评审委员会评审
+                            </if>
+                            ，当前轮次:第{$votelunciinfo['round']}轮。
+                        </p>
+                        <!-- PAGE CONTENT BEGINS -->
+                        <?php if(empty($istijiaotoupiao)){ ?>
+                        <div class="cf" style="position: fixed;background: #4f99c6">
+
+                            <div style="display: flex;justify-content: center">
+                                <input class="btn btn-info linshi" type="button" value="临时保存" >
+                                <input class="btn btn-info submit" type="button" value="投票">
+                            </div>
+
+                            <div style="margin-top: 4px">
+                                <ul style="color: white; font-size:16px">
+                                    <volist name="listtype" id="xy" key='y'>
+                                        <li ><a href="#div{$y}" class="aaa tishixinxix{$y-1}" style="text-decoration: none">{$xy['quota_log']}, {$xy['renshutixing']}</a></li>
+                                    </volist>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <?php }else{ ?>
+                        <div class="cf">
+                            <p style="color: red;">您已经提交投票了</p>
+                        </div>
+                        <?php } ?>
+
+                        <div class="space-4"></div>
+                        <form id="form" method="post" action="" style='margin-top: 50px;'>
+                            <input type="hidden" name="vote_id" id="getaid" value="{$vote_id}"/>
+                            <input type="hidden" name="roundid" id="getnid" value="{$round_id}"/>
+                            <volist name="listtype" id="xy" key='y'>
+                                <div id="div{$y}">
+                                <?php if(!empty($xy['list'])){ ?>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+<!--                                        <th>ordernumber</th>-->
+                                        <th>指标类型</th>
+                                        <th>申请人信息检索码</th>
+                                        <th>组别</th>
+                                        <th>类别</th>
+                                        <th>科室</th>
+                                        <th>姓名</th>
+                                        <th>申请职位</th>
+                                        <th>评审意见&nbsp;&nbsp;&nbsp;
+                                            <?php if(!empty($xy['list'])){ ?>
+                                            <input style="margin-left: 10px;" class="check-all" type="checkbox"
+                                                   value="" <?php if(!empty($istijiaotoupiao)){ ?>
+                                            disabled="true" <?php } ?> >全选
+                                            <?php } ?>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <volist name="xy['list']" id="val" key="index">
+                                        <tr>
+                                            <td>{$index}</td>
+<!--                                            <td>{$val['ordernumber']}-->
+<!--                                            </td>-->
+<!--                                            <input type="hidden" value="{$xy.ids}" >-->
+                                            <td>{$xy['quota_log']},{$xy['renshutixing']}
+                                            </td>
+                                            <td><a style="color: black"  href="{:U('userInfo',array('userAccount'=>$val['employee_id'],'ids'=>$xy['ids']))}"  target="_blank">{$val['employee_id']}</a> </td>
+<!--                                            <td><a style="color: black"  data-ids = "{$val.ids}" onclick="openUserInfo()" target="_blank">{$val['employee_id']}</a> </td>-->
+                                            <td>{$voteinfo['category_name']}</td>
+                                            <td>{$voteinfo['professional_name']}</td>
+                                            <td>{$val['office_name']}</td>
+                                            <td>{$val['applicant_name']}</td>
+                                            <td>
+                                                <?php if(empty($val['myson'])){ ?>
+                                                {$val['apply_title']}
+                                                <?php }else{ ?>
+                                                <volist name="val.myson" id="mo" key="no">
+                                                    {$mo['apply_title']}
+                                                </volist>
+                                                <?php } ?>
+                                            </td>
+                                            <td>
+                                                <?php if(empty($val['myson'])){ ?>
+                                                <if condition="$val['is_yiyou'] eq '0'">
+                                                    <input class="aids" type="checkbox" name="aids[]" checked="checked"
+                                                           value="{$val['rounddetail_id']}" <?php if(!empty($istijiaotoupiao)){ ?>
+                                                    disabled="true" <?php } ?> >{$val['apply_title']}
+                                                    <else/>
+                                                    <input class="aids" type="checkbox" name="aids[]"
+                                                           value="{$val['rounddetail_id']}" <?php if(!empty($istijiaotoupiao)){ ?>
+                                                    disabled="true" <?php } ?> >{$val['apply_title']}
+                                                </if>
+                                                <?php }else{ ?>
+                                                <volist name="val.myson" id="mo" key="no">
+                                                    <if condition="$mo['is_yiyou'] eq '0'">
+                                                        <input class="aids" type="checkbox" name="aids[]"
+                                                               checked="checked"
+                                                               value="{$mo['rounddetail_id']}" <?php if(!empty($istijiaotoupiao)){ ?>
+                                                        disabled="true" <?php } ?> <?php if(($mo['is_passed'] == '10') || ($mo['is_passed'] == '12')){ ?>
+                                                        disabled="true" <?php } ?>
+                                                        ><span <?php if(($mo['is_passed'] == '10') || ($mo['is_passed'] == '12')){ ?>
+                                                        style="color:#C0C0C0;" <?php } ?> >{$mo['apply_title']}</span>&nbsp;&nbsp;&nbsp;
+                                                        <else/>
+                                                        <input class="aids" type="checkbox" name="aids[]"
+                                                               value="{$mo['rounddetail_id']}" <?php if(!empty($istijiaotoupiao)){ ?>
+                                                        disabled="true" <?php } ?> <?php if(($mo['is_passed'] == '10') || ($mo['is_passed'] == '12')){ ?>
+                                                        disabled="true" <?php } ?>
+                                                        ><span <?php if(($mo['is_passed'] == '10') || ($mo['is_passed'] == '12')){ ?>
+                                                        style="color:#C0C0C0;" <?php } ?> >{$mo['apply_title']}<?php if($mo['is_passed'] == '10'){ ?>(已通过)<?php }?><?php if($mo['is_passed'] == '12'){ ?>(未通过)<?php }?></span>&nbsp;&nbsp;&nbsp;
+                                                    </if>
+                                                </volist>
+                                                <?php } ?>
+                                            </td>
+                                        </tr>
+                                    </volist>
+
+                                    </tbody>
+                                </table>
+                                <?php } ?>
+                                <volist name="jieguoinfo" id="ab" key="cd">
+                                    <?php if(!empty($xy['list'])){ ?>
+                                    <if condition="$cd eq $y"><p class="tishixinxi{$cd-1}"
+                                                                 style="color: red;margin-bottom: 50px;">{$ab}</p>
+                                        <else/>
+                                    </if>
+                                    <?php } ?>
+                                </volist>
+                                </div>
+                            </volist>
+                        </form>
+
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+
+    //判断是否超过人数返回信息
+    function backinfochao() {
+        var round_id = $('#getnid').val();
+        var vote_id = $('#getaid').val();
+        //获取当前选中的所有申请人信息
+        var spCodesTemp = "";
+        $('input:checkbox[class=aids]:checked').each(function (i) {
+            if (0 == i) {
+                spCodesTemp = $(this).val();
+            } else {
+                spCodesTemp += ("," + $(this).val());
+            }
+        });
+        var url = "{:U('Tpiao/isoverpeople')}";
+        var resultinfo;
+        $.ajaxSetup({async: false});
+        $.getJSON(url, {check_applicantid: spCodesTemp, round_id: round_id, vote_id: vote_id}, function (json) {
+            //console.log(json);
+            resultinfo = json;
+        });
+        $.ajaxSetup({async: true});
+        //console.log(resultinfo);
+        return resultinfo;
+    }
+
+    function getinfo() {
+        var round_id = $('#getnid').val();
+        var vote_id = $('#getaid').val();
+        var spCodesTemp = "";
+        $('input:checkbox[class=aids]:checked').each(function (i) {
+            if (0 == i) {
+                spCodesTemp = $(this).val();
+            } else {
+                spCodesTemp += ("," + $(this).val());
+            }
+        });
+        var url = "{:U('Tpiao/toupiaojieguo')}";
+        $.getJSON(url, {check_applicantid: spCodesTemp, round_id: round_id, vote_id: vote_id}, function (json) {
+            $.each(json, function (index, array) {
+                $(".tishixinxi" + index).html("");
+                if (array['tishijieguo']) {
+                    //修改显示提示信息；
+                    var lastinfo = array['tishijieguo'];
+                    $(".tishixinxi" + index).html(lastinfo);
+                }
+
+                $(".tishixinxix" + index).html("");
+                if (array['tishijieguo1']) {
+                    //修改显示提示信息；
+                    var lastinfo = array['tishijieguo1'];
+                    var result = array['result']
+                    $(".tishixinxix" + index).html(lastinfo);
+                    if (result != 0){
+                        $(".tishixinxix" + index).addClass('bbb')
+                    }else {
+                        $(".tishixinxix" + index).removeClass('bbb')
+                    }
+                }
+            });
+        });
+    }
+
+    //判断当前轮次是否已经结束
+    function round_cancel() {
+        var round_id = $('#getnid').val();
+        var url = "{:U('Tpiao/is_cancel')}";
+        var cancelresultinfo;
+        $.ajaxSetup({async: false});
+        $.getJSON(url, {round_id: round_id}, function (json) {
+            cancelresultinfo = json;
+        });
+        $.ajaxSetup({async: true});
+        return cancelresultinfo;
+    }
+
+    $(function () {
+        if ($(".aids").is(':checked')) {
+            getinfo();
+        }
+        $(".check-all").click(function () {
+            $(this.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("aids")).not(':disabled').prop("checked", this.checked);
+            getinfo();
+        });
+
+        $(".aids").click(function () {
+            var option = $(".ids");
+            option.each(function (i) {
+                if (!this.checked) {
+                    $(".check-all").prop("checked", false);
+                    return false;
+                } else {
+                    $(".check-all").prop("checked", true);
+                }
+            });
+            getinfo();
+        });
+
+
+        $(".submit").click(function () {
+            if ($("input[type='checkbox']").is(':checked') == false) {
+                alert('请先勾选');
+                return false;
+            }
+            //判断是否是正在启动中的投票
+            var backcancelinfo = round_cancel();
+            var iscancelresult = backcancelinfo['result'];
+            var tixingxinxi = '是否确定临时保存？';
+            if (iscancelresult == 2) {
+                tixingxinxi = backcancelinfo['info'];
+                bootbox.alert({
+                    title: "系统提示",
+                    message: tixingxinxi,
+                    buttons: {
+                        "ok": {"label": "取消"}
+                    }
+                });
+                return false;
+            }
+
+            linshitoupiao();
+
+            var backinfolast = backinfochao();
+            //alert(backinfolast['result']);return false;
+            var tishiresult = backinfolast['result'];
+            var tixingxinxi = '是否确定提交投票？';
+            var shifoutqueding = '"confirm": {"label": "确定","className": "btn-danger"}';
+            if (tishiresult == 1) {
+              //  tixingxinxi = backinfolast['detail_msg'] + '是否确定提交投票？';
+                tixingxinxi = '你还有未用完的指标，是否确定提交投票？';
+                bootbox.confirm({
+                    title: "系统提示",
+                    message: tixingxinxi,
+                    callback: function (result) {
+                        if (result) {
+                            var newUrl = "{:U('nowvote')}";    //设置新提交地址
+                            $("#form").attr('action', newUrl);
+                            $("#form").submit();
+                        }
+                    },
+                    buttons: {
+                        "cancel": {"label": "未看到，重新返回投票"},
+                        "confirm": {
+                            "label": "确定不投了，继续提交",
+                            "className": "btn-danger"
+                        }
+                    }
+                });
+                return false;
+            }
+            if (tishiresult == 2) {
+                tixingxinxi = backinfolast['detail_msg'] + '暂不能提交投票！';
+                bootbox.alert({
+                    title: "系统提示",
+                    message: tixingxinxi,
+                    buttons: {
+                        "ok": {"label": "取消"}
+                    }
+                });
+                return false;
+            }
+            bootbox.confirm({
+                title: "系统提示",
+                message: tixingxinxi,
+                callback: function (result) {
+                    if (result) {
+                        var newUrl = "{:U('nowvote')}";    //设置新提交地址
+                        $("#form").attr('action', newUrl);
+                        $("#form").submit();
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+
+        });
+
+        $(".linshi").click(function () {
+            //判断是否是正在启动中的投票
+            var backcancelinfo = round_cancel();
+            var iscancelresult = backcancelinfo['result'];
+            var tixingxinxi = '是否确定临时保存？';
+            if (iscancelresult == 2) {
+                tixingxinxi = backcancelinfo['info'];
+                bootbox.alert({
+                    title: "系统提示",
+                    message: tixingxinxi,
+                    buttons: {
+                        "ok": {"label": "取消"}
+                    }
+                });
+                return false;
+            }
+            bootbox.confirm({
+                title: "系统提示",
+                message: "是否确定临时保存？",
+                callback: function (result) {
+                    if (result) {
+                        var newUrl = "{:U('linshi')}";    //设置新提交地址
+                        $("#form").attr('action', newUrl);
+                        $("#form").submit();
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+        });
+    })
+
+    // 性能优化
+    var last_save = null;
+
+    function linshitoupiao() {
+
+        var save = $('#form').serialize();
+        console.log("save: " + save);
+        if (last_save == save) {
+            console.log("no need to save since that has no change");
+            return false;
+        }
+
+        last_save = save;
+
+        //判断是否是正在启动中的投票
+        var backcancelinfo = round_cancel();
+        var iscancelresult = backcancelinfo['result'];
+        if (iscancelresult == 2) {
+            return false;
+        } else {
+            var round_id = $('#getnid').val();
+            var vote_id = $('#getaid').val();
+            var spCodesTemp = "";
+            $('input:checkbox[class=aids]:checked').each(function (i) {
+                if (0 == i) {
+                    spCodesTemp = $(this).val();
+                } else {
+                    spCodesTemp += ("," + $(this).val());
+                }
+            });
+            //alert(spCodesTemp);
+            var url = "{:U('Tpiao/timebaocun')}";
+            $.getJSON(url, {check_applicantid: spCodesTemp, round_id: round_id, vote_id: vote_id}, function (json) {
+                $.each(json, function (index, array) {
+
+                });
+            });
+        }
+    }
+
+    //重复执行某个方法 
+    var dsq = window.setInterval("linshitoupiao()", 120000);
+    //去掉定时器的方法 
+    //window.clearInterval(dsq); 
+
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" id="form" method="post" action="{:U('update')}" enctype="multipart/form-data">
+                            <p style='margin-left: 75px;margin-bottom: 20px;color: #438eb9;' >新增投票</p>
+                            <!-- PAGE CONTENT BEGINS -->
+                            <input type="hidden" id="xainshi" name="xainshi" value="">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-0">
+                                   投票组别 </label>
+                                <div class="col-sm-9">
+                                    <select id="sid" name="category_id" class="col-xs-10 col-sm-5">
+                                        <volist name="category" id="vo">
+                                        <option value="{$vo.category_id}">{$vo.category_name}</option>
+                                        </volist>
+                                    </select>
+
+                                    <span class="help-inline col-xs-12 col-sm-7">
+                                        <span class="middle">选择投票组别。</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-0">
+                                   对应职称 </label>
+                                <div class="col-sm-9">
+                                    <select id="zhicheng_id" name="professional_id" class="col-xs-10 col-sm-5">
+                                        <option value="1">正高</option>
+                                        <option value="2">副高</option>                                        
+                                    </select>
+
+                                    <span class="help-inline col-xs-12 col-sm-7">
+                                        <span class="middle">选择对应职称。</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-1">
+                                    投票标题 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="vote_name" id="title" placeholder="投票标题"
+                                           class="col-xs-10 col-sm-5" value="{$article['vote_name']}">
+                                    <span class="help-inline col-xs-12 col-sm-7">
+                                        <span class="middle">投票标题不能为空。</span>
+                                    </span>
+                                </div>
+                            </div>                           
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-3">
+                                    导入申报名单 </label>
+                                <div class="col-sm-9">
+                                    <input type="file" name="import" id="import" class="col-xs-3 col-sm-3">
+<!--                                    <span class="help-inline col-xs-5 col-sm-5">
+                                        <button class="btn btn-info daoanniu" type="button">
+                                            <i class="icon-ok bigger-110"></i>
+                                            导入
+                                        </button>
+                                    </span>-->
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+
+                            <div class="col-md-offset-2 col-md-9">
+                                
+                                <button class="btn btn-info submit" type="button">
+                                    <i class="icon-ok bigger-110"></i>
+                                    提交
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="icon-undo bigger-110"></i>
+                                    重置
+                                </button>
+                            </div>
+                            <!-- PAGE CONTENT ENDS -->
+                        </form>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#sid').change(function(){ 
+            var zhicheng_id = $('#zhicheng_id');
+            var url = "{:U('Index/getzc')}"; 
+            var category_id = $(this).children('option:selected').val();/*获取组别id*/            
+            /*每次下拉框改变都清空原有的选项*/
+            $("#zhicheng_id").empty();
+            $.getJSON(url, {category_id: category_id}, function (json) {
+                $.each(json, function (index, array) {
+                    if (array['professional_id']) {
+                        var option = "<option value='" + array['professional_id'] + "'>" + array['professional_name'] + "</option>";
+                        zhicheng_id.append(option);
+                    }
+                });
+            });
+        });
+    });
+    
+    $(function () {
+        $("#tabs").tabs();        
+        $(".submit").click(function () {
+            var sid = $("#sid").val();
+            var title = $("#title").val();
+            var files = $('input[name="import"]').val();
+            if (sid == 0) {
+                bootbox.dialog({
+                    title: '友情提示：',
+                    message: "投票分类必须选择。",
+                    buttons: {
+                        "success": {
+                            "label": "确定",
+                            "className": "btn-danger"
+                        }
+                    }
+                });
+                return;
+            }
+            if (title == '') {
+                bootbox.dialog({
+                    title: '友情提示：',
+                    message: "投票标题必须填写。",
+                    buttons: {
+                        "success": {
+                            "label": "确定",
+                            "className": "btn-danger"
+                        }
+                    }
+                });
+                return;
+            }
+            if(files == ''){                
+                alert('请先选择导入文件');
+                die;
+            }            
+            $("#form").submit();
+        });
+        
+        //导入显示导入的数据
+        $(".daoanniu").click(function () {
+            bootbox.confirm({
+                title: "系统提示",
+                message: "是否确定导入显示数据？",
+                callback: function (result) {
+                    if (result) {
+                        $("#xainshi").val("xainshi");
+                        $("#form").submit();
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

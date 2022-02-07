@@ -1,0 +1,690 @@
+<include file="Public/head"/>
+<style>
+    table {
+        /*设置相邻单元格的边框间的距离*/
+        border-spacing: 0;
+        /*表格设置合并边框模型*/
+        border-collapse: collapse;
+        text-align: center;
+        word-wrap:break-word;
+
+    }
+
+    /*关键设置 tbody出现滚动条*/
+    table tbody {
+        display: block;
+        height: 400px;
+        overflow-y: scroll;
+    }
+
+    table tbody td {
+        word-break:break-all;
+        word-wrap:break-word;
+        border: 1px solid grey
+    }
+    table thead td {
+
+        border: 1px solid grey
+    }
+
+    table thead,
+    tbody tr {
+        display: table;
+        width: 5140px;
+        table-layout: fixed;
+    }
+
+    /*关键设置：滚动条默认宽度是16px 将thead的宽度减16px*/
+    table thead tr {
+        width: 5140px;
+    }
+
+    table thead td {
+        border: 1px solid grey;
+        background-color: white;
+    }
+</style>
+<body class="no-skin">
+<include file="Public/header"/>
+<input type="hidden" name="user_id" id="user_id" value="{$userAccount}"/>
+<input type="hidden" name="ids" id="ids" value="{$ids}"/>
+<table>
+    <thead id="th">
+<!--    <tr>-->
+<!--        <td rowspan="5" style="width:60px;">序号</td>-->
+<!--        <td rowspan="5" style="width:80px;">是否双报</td>-->
+<!--        <td rowspan="5" style="width:80px;">人事编号</td>-->
+<!--        <td rowspan="5" style="width:80px;">科室</td>-->
+<!--        <td rowspan="5" style="width:80px;">姓名</td>-->
+<!--        <td rowspan="5" style="width:80px;">出生年月</td>-->
+<!--        <td rowspan="5" style="width:80px;">性别</td>-->
+<!--        <td rowspan="5" style="width:80px;">学历(位)</td>-->
+<!--        <td rowspan="5" style="width:80px;">毕业时间</td>-->
+<!--        <td colspan="2" style="width:160px;">现职务</td>-->
+<!--        <td rowspan="5" style="width:80px;">申报职称</td>-->
+<!--        <td rowspan="5" style="width:80px;">来院时间</td>-->
+<!--        <td rowspan="5" style="width:80px;">是否符合必备条件</td>-->
+<!--        <td rowspan="5" style="width:80px;">抗疫一线人员情况（是）</td>-->
+<!--        <td colspan="38" style="width:3040px;">选择条件</td>-->
+<!--        <td rowspan="5" style="width:80px;">申报类型</td>-->
+<!--        <td rowspan="5" style="width:80px;">"达到选择条件之</td>-->
+<!--        <td rowspan="5" style="width:80px;">科室排名</td>-->
+<!--        <td rowspan="5" style="width:80px;">内聘情况</td>-->
+<!--        <td rowspan="5" style="width:80px;">任现职以来出国时长（月）</td>-->
+<!--        <td rowspan="2" colspan="2" style="width:160px;">支援情况</td>-->
+<!--        <td rowspan="5" style="width:80px;">备注</td>-->
+<!--        <td rowspan="5" style="width:280px;">个人亮点自述</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td rowspan="4" style="width: 80px;">现职务名称</td>-->
+<!--        <td rowspan="4" style="width: 80px;">聘任时间</td>-->
+
+<!--        <td colspan="6">1</td>-->
+<!--        <td colspan="3">2</td>-->
+<!--        <td colspan="4">3</td>-->
+<!--        <td colspan="3">4</td>-->
+<!--        <td colspan="4">5</td>-->
+<!--        <td colspan="2">6</td>-->
+<!--        <td colspan="3">7</td>-->
+<!--        <td colspan="3">8</td>-->
+<!--        <td colspan="5">9</td>-->
+<!--        <td colspan="3">10</td>-->
+<!--        <td colspan="2">11</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td colspan="4">医疗评价</td>-->
+<!--        <td colspan="2">临床学院评价</td>-->
+<!--        <td colspan="3">国家、省部级教学获奖</td>-->
+<!--        <td colspan="4">教学质量奖与成果奖</td>-->
+<!--        <td colspan="3">精品课程</td>-->
+<!--        <td colspan="4">教学竞赛获奖</td>-->
+<!--        <td colspan="2">出版书类别及字数</td>-->
+<!--        <td colspan="3">教改项目科研项目</td>-->
+<!--        <td colspan="3">实到校单项科研经费</td>-->
+<!--        <td colspan="5">第一作者或通迅作者论文情况</td>-->
+<!--        <td colspan="3">国家、省部级科研奖</td>-->
+<!--        <td colspan="2">发明专利</td>-->
+<!--        <td rowspan="3" style="width: 80px;">支援类型</td>-->
+<!--        <td rowspan="3" style="width: 80px;">时长（月）</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td colspan="2" style="width: 80px;">医办</td>-->
+<!--        <td colspan="2" style="width: 80px;">门办</td>-->
+<!--        <td rowspan="2" style="width: 80px;">等级</td>-->
+<!--        <td rowspan="2" style="width: 80px;">评分</td>-->
+<!--        <td rowspan="2" style="width: 80px;">名称</td>-->
+<!--        <td rowspan="2" style="width: 80px;">等级</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td rowspan="2" style="width: 80px;">名称</td>-->
+<!--        <td rowspan="2" style="width: 80px;">等级</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td rowspan="2" style="width: 80px;">时间</td>-->
+<!--        <td rowspan="2" style="width: 80px;">等级</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td rowspan="2" style="width: 80px;">时间</td>-->
+<!--        <td rowspan="2" style="width: 80px;">奖项级别</td>-->
+<!--        <td rowspan="2" style="width: 80px;">等级</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td rowspan="2" style="width: 80px;">时间</td>-->
+<!--        <td rowspan="2" style="width: 80px;">出版书类别</td>-->
+<!--        <td rowspan="2" style="width: 80px;">承担字数(万)</td>-->
+<!--        <td rowspan="2" style="width: 80px;">类别</td>-->
+<!--        <td rowspan="2" style="width: 80px;">经费</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td rowspan="2" style="width: 80px;">类别</td>-->
+<!--        <td rowspan="2" style="width: 80px;">经费</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td colspan="5" style="width: 80px;">其中</td>-->
+<!--        <td rowspan="2" style="width: 80px;">名称</td>-->
+<!--        <td rowspan="2" style="width: 80px;">等级</td>-->
+<!--        <td rowspan="2" style="width: 80px;">排名</td>-->
+<!--        <td rowspan="2" style="width: 80px;">项数</td>-->
+<!--        <td rowspan="2" style="width: 80px;">实施转让费</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td style="width: 80px;">等级</td>-->
+<!--        <td style="width: 80px;">评分</td>-->
+<!--        <td style="width: 80px;">等级</td>-->
+<!--        <td style="width: 80px;">评分</td>-->
+<!--        <td style="width: 80px;">A 类</td>-->
+<!--        <td style="width: 80px;">B 类</td>-->
+<!--        <td style="width: 80px;">C 类</td>-->
+<!--        <td style="width: 80px;">D 类</td>-->
+<!--        <td style="width: 80px;">E+F类</td>-->
+<!--    </tr>-->
+    </thead>
+    <tbody id="tb">
+    </tbody>
+</table>
+<include file="Public/footerjs"/>
+<script >
+    $(function () {
+       // var url = "{:U('Tpiao/isoverpeople')}";
+        var userAccount =$("#user_id").val();
+        var ids =$("#ids").val();
+        var url= "https://whuhhrmapi.asclepius.whxh.com.cn/dcaBReport/user";
+        get_head_23();
+        $.ajaxSetup({async: false});
+        $.post(url,{
+            ids: ids
+        },function(json){
+            console.log(json);
+            genJson_23(json);
+            setTimeout(function () {
+                handleColor_23(userAccount);
+            },500);
+        });
+        $.ajaxSetup({async: true});
+        // $.ajaxSetup({async: false});
+        // $.getJSON(url, function (json) {
+        //     console.log(json);
+        //     genJson(json);
+        // });
+        // $.ajaxSetup({async: true});
+    })
+    function  handleColor(userAccount) {
+        $("#tb").find('tr').each(function(){
+            if($(this).find('td').eq(2).html()==userAccount){
+                $(this).css('background-color','green');
+                $('#tb').animate({scrollTop:$(this).offset().top-300}, 100);
+            }
+        });
+    }
+    function  handleColor_zc(userAccount) {
+        $("#tb").find('tr').each(function(){
+            if($(this).find('td').eq(1).html()==userAccount){
+                $(this).css('background-color','green');
+                $('#tb').animate({scrollTop:$(this).offset().top-300}, 100);
+            }
+        });
+    }
+    function  handleColor_23(userAccount) {
+        $("#tb").find('tr').each(function(){
+            if($(this).find('td').eq(4).html()==userAccount){
+                $(this).css('background-color','green');
+                $('#tb').animate({scrollTop:$(this).offset().top-300}, 100);
+            }
+        });
+    }
+
+    /**
+     * 正高副高的表头
+     * @returns {string}
+     */
+    function get_head_zg() {
+        var str= '';
+        str += '<tr>';
+        str += '<td rowspan="5" style="width:60px;">序号</td>' ;
+        str += '<td rowspan="5" style="width:80px;">是否双报</td>' ;
+        str += '<td rowspan="5" style="width:80px;">人事编号</td>' ;
+        str += '<td rowspan="5" style="width:80px;">科室</td>' ;
+        str += '<td rowspan="5" style="width:80px;">姓名</td>' ;
+        str += '<td rowspan="5" style="width:80px;">出生年月</td>' ;
+        str += '<td rowspan="5" style="width:80px;">性别</td>' ;
+        str += '<td rowspan="5" style="width:80px;">学历(位)</td>' ;
+        str += '<td rowspan="5" style="width:80px;">毕业时间</td>' ;
+        str += '<td colspan="2" style="width:160px;">现职务</td>' ;
+        str += '<td rowspan="5" style="width:80px;">申报职称</td>' ;
+        str += '<td rowspan="5" style="width:80px;">来院时间</td>' ;
+        str += '<td rowspan="5" style="width:80px;">是否符合必备条件</td>' ;
+        str += '<td rowspan="5" style="width:80px;">抗疫一线人员情况（是）</td>' ;
+        str += '<td colspan="38" style="width:3040px;">选择条件</td>' ;
+        str += '<td rowspan="5" style="width:80px;">申报类型</td>' ;
+        str += '<td rowspan="5" style="width:80px;">"达到选择条件之</td>' ;
+        str += '<td rowspan="5" style="width:80px;">科室排名</td>' ;
+        str += '<td rowspan="5" style="width:80px;">内聘情况</td>' ;
+        str += '<td rowspan="5" style="width:80px;">任现职以来出国时长（月）</td>' ;
+        str += '<td rowspan="2" colspan="2" style="width:160px;">支援情况</td>' ;
+        str += '<td rowspan="5" style="width:80px;">备注</td>' ;
+        str += '<td rowspan="5" style="width:280px;">个人亮点自述</td>' ;
+        str += '</tr>';
+        str += '<tr>';
+        str += '<td rowspan="4" style="width: 80px;">现职务名称</td>' ;
+        str += '<td rowspan="4" style="width: 80px;">聘任时间</td>' ;
+        str += '<td colspan="6">1</td>' ;
+        str += '<td colspan="3">2</td>' ;
+        str += '<td colspan="4">3</td>' ;
+        str += '<td colspan="3">4</td>' ;
+        str += '<td colspan="4">5</td>' ;
+        str += '<td colspan="2">6</td>' ;
+        str += '<td colspan="3">7</td>' ;
+        str += '<td colspan="3">8</td>' ;
+        str += '<td colspan="5">9</td>' ;
+        str += '<td colspan="3">10</td>' ;
+        str += '<td colspan="2">11</td>' ;
+        str += '</tr>';
+        str += '<tr>';
+        str += '<td colspan="4">医疗评价</td>' ;
+        str += '<td colspan="2">临床学院评价</td>' ;
+        str += '<td colspan="3">国家、省部级教学获奖</td>' ;
+        str += '<td colspan="4">教学质量奖与成果奖</td>' ;
+        str += '<td colspan="3">精品课程</td>' ;
+        str += '<td colspan="4">教学竞赛获奖</td>' ;
+        str += '<td colspan="2">出版书类别及字数</td>' ;
+        str += '<td colspan="3">教改项目科研项目</td>' ;
+        str += '<td colspan="3">实到校单项科研经费</td>' ;
+        str += '<td colspan="5">第一作者或通迅作者论文情况</td>' ;
+        str += '<td colspan="3">国家、省部级科研奖</td>' ;
+        str += '<td colspan="2">发明专利</td>' ;
+        str += '<td rowspan="3" style="width: 80px;">支援类型</td>' ;
+        str += '<td rowspan="3" style="width: 80px;">时长（月）</td>' ;
+        str += '</tr>';
+        str += '<tr>';
+        str += '<td colspan="2" style="width: 80px;">医办</td>' ;
+        str += '<td colspan="2" style="width: 80px;">门办</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">等级</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">评分</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">名称</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">等级</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">名称</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">等级</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">时间</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">等级</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">时间</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">奖项级别</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">等级</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">时间</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">出版书类别</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">承担字数(万)</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">类别</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">经费</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">类别</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">经费</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td colspan="5" style="width: 80px;">其中</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">名称</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">等级</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">排名</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">项数</td>' ;
+        str += '<td rowspan="2" style="width: 80px;">实施转让费</td>' ;
+        str += '</tr>';
+        str += '<tr>';
+        str += '<td style="width: 80px;">等级</td>' ;
+        str += '<td style="width: 80px;">评分</td>' ;
+        str += '<td style="width: 80px;">等级</td>' ;
+        str += '<td style="width: 80px;">评分</td>' ;
+        str += '<td style="width: 80px;">A 类</td>' ;
+        str += '<td style="width: 80px;">B 类</td>' ;
+        str += '<td style="width: 80px;">C 类</td>' ;
+        str += '<td style="width: 80px;">D 类</td>' ;
+        str += '<td style="width: 80px;">E+F类</td>' ;
+        str += '</tr>';
+        $("#th").html(str);
+    }
+
+    /**
+     * 中初级表头
+     * @returns {string}
+     */
+    function get_head_zc() {
+        var str= '';
+        str += '<tr style="height:60px">';
+        str += '<td rowspan="2" style="width:60px;">序号</td>' ;
+        str += '<td rowspan="2" style="width:80px;">职员代码</td>' ;
+        str += '<td rowspan="2" style="width:80px;">人员类别</td>' ;
+        str += '<td rowspan="2" style="width:80px;">系列</td>' ;
+        str += '<td rowspan="2" style="width:80px;">科室</td>' ;
+        str += '<td rowspan="2" style="width:80px;">姓名</td>' ;
+        str += '<td rowspan="2" style="width:80px;">出生年月</td>' ;
+        str += '<td rowspan="2" style="width:80px;">性别</td>' ;
+        str += '<td rowspan="2" style="width:80px;">现任职称</td>' ;
+        str += '<td rowspan="2" style="width:80px;">现任职称聘任时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">申报职称</td>' ;
+        str += '<td rowspan="2" style="width:80px;">最高学历</td>' ;
+        str += '<td rowspan="2" style="width:80px;">最高学历毕业时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">来院时间</td>' ;
+
+        str += '<td rowspan="2" style="width:80px;">中专毕业时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">大专毕业时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">本科毕业时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">硕士毕业时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">博士毕业时间</td>' ;
+
+        str += '<td colspan="4" style="width:320px;">医疗评分</td>' ;
+        str += '<td colspan="2" style="width:160px;">教学评分</td>' ;
+        str += '<td colspan="6" style="width:480px;">论文</td>' ;
+        str += '<td colspan="2" style="width:160px;">著作或教材</td>' ;
+        str += '<td colspan="3" style="width:240px;">科研课题</td>' ;
+        str += '<td colspan="2" style="width:160px;">取得湖北省相应专业技术职务资格及时间</td>' ;
+        str += '<td rowspan="2" style="width:80px;">中级水平能力测试情况（是）</td>' ;
+        str += '<td rowspan="2" style="width:80px;">申报类型</td>' ;
+        str += '</tr>';
+        str += '<tr style="height:80px">';
+        str += '<td  style="width: 80px;">医务等级</td>' ;
+        str += '<td  style="width: 80px;">医务评分</td>' ;
+        str += '<td  style="width: 80px;">门办等级</td>' ;
+        str += '<td  style="width: 80px;">门办评分</td>' ;
+        str += '<td  style="width: 80px;">等级</td>' ;
+        str += '<td  style="width: 80px;">分数</td>' ;
+        str += '<td  style="width: 80px;">A</td>' ;
+        str += '<td  style="width: 80px;">B</td>' ;
+        str += '<td  style="width: 80px;">C</td>' ;
+        str += '<td  style="width: 80px;">D</td>' ;
+        str += '<td  style="width: 80px;">E</td>' ;
+        str += '<td  style="width: 80px;">F</td>' ;
+        str += '<td  style="width: 80px;">著作或教材</td>' ;
+        str += '<td  style="width: 80px;">承担字数(万)</td>' ;
+        str += '<td  style="width: 80px;">级别</td>' ;
+        str += '<td  style="width: 80px;">金额（万元）</td>' ;
+        str += '<td  style="width: 80px;">排名</td>' ;
+        str += '<td  style="width: 80px;">专业业技术职务资格名称</td>' ;
+        str += '<td  style="width: 80px;">时间</td>' ;
+        str += '</tr>';
+        $("#th").html(str);
+    }
+
+
+    /**
+     * 二三级表头
+     * @returns {string}
+     */
+    function get_head_23() {
+        var str= '';
+        str += '<tr style="height:60px">';
+        str += '<td rowspan="3" style="width:60px;">序号</td>' ;
+        str += '<td rowspan="3" style="width:100px;">科室分类</td>' ;
+        str += '<td rowspan="3" style="width:80px;">申报等级</td>' ;
+        str += '<td rowspan="3" style="width:80px;">科室</td>' ;
+        str += '<td rowspan="3" style="width:80px;">职员代码</td>' ;
+        str += '<td rowspan="3" style="width:80px;">性别</td>' ;
+
+
+        str += '<td rowspan="3" style="width:80px;">姓名</td>' ;
+        str += '<td rowspan="3" style="width:80px;">出生年月</td>' ;
+        str += '<td rowspan="3" style="width:80px;">年龄</td>' ;
+        str += '<td rowspan="3" style="width:80px;">最高学历</td>' ;
+        str += '<td rowspan="3" style="width:80px;">最高学历毕业时间</td>' ;
+        str += '<td rowspan="2" colspan="2" style="width:160px;">专业技术职务</td>' ;
+        str += '<td rowspan="2" colspan="2" style="width:160px;">现任岗位级别及时间</td>' ;
+        str += '<td rowspan="3" style="width:80px;">申报三级时是否使用医疗条件</td>' ;
+
+        str += '<td rowspan="3" style="width:80px;">任博导时间</td>' ;
+
+        str += '<td rowspan="3" style="width:80px;">申报岗位</td>' ;
+        str += '<td rowspan="3" style="width:80px;">申报年度</td>' ;
+        str += '<td rowspan="3" style="width:80px;">是否满足必备条件</td>' ;
+        str += '<td rowspan="3" style="width:80px;">是否必须使用医疗条件</td>' ;
+        str += '<td rowspan="3" style="width:150px;">满足学术条件情况(人事处审核)</td>' ;
+        str += '<td rowspan="3" style="width:80px;">教学评分</td>' ;
+
+        str += '<td rowspan="3" style="width:80px;">近三年核心人力资源评分均值</td>' ;
+        str += '<td rowspan="3" style="width:80px;">近三年医疗综合评分</td>' ;
+        str += '<td rowspan="3" style="width:80px;">近三年手术台次</td>' ;
+        str += '<td rowspan="3" style="width:80px;">近三年收治住院病人数</td>' ;
+        str += '<td rowspan="3" style="width:80px;">近三年门诊收治病人数</td>' ;
+        str += '<td rowspan="2" colspan="2" style="width:160px;">近三年新技术新业务</td>' ;
+        str += '<td colspan="16" style="width:1280px;">任现岗位以来</td>' ;
+        str += '<td rowspan="3" style="width:250px;">学会任职</td>' ;
+        str += '<td rowspan="3" style="width:80px;">重要抗疫奖励</td>' ;
+        str += '<td rowspan="3" style="width:80px;">备注</td>' ;
+        str += '</tr>';
+        str += '<tr style="height:80px">';
+        str += '<td  rowspan="2" style="width: 80px;">单篇SCI高分文章≥20</td>' ;
+        str += '<td  rowspan="2" style="width: 80px;">单篇SCI高分文章≥10且<20</td>' ;
+        str += '<td  colspan="6" style="width: 480px;">发表主要文章</td>' ;
+        str += '<td  colspan="2" style="width: 160px;">著作</td>' ;
+        str += '<td  colspan="3" style="width: 240px;">主持国家级课题</td>' ;
+        str += '<td  colspan="3" style="width: 240px;">科研或教学获奖</td>' ;
+        str += '</tr>';
+
+        str += '<tr style="height:80px">';
+        str += '<td   style="width: 80px;">任职</td>' ;
+        str += '<td  style="width: 80px;">时间</td>' ;
+        str += '<td  style="width: 80px;">岗位等级</td>' ;
+        str += '<td   style="width: 80px;">任职时间</td>' ;
+        str += '<td   style="width: 80px;">负责开展的新技术新业务</td>' ;
+        str += '<td   style="width: 80px;">负责的新技术新业务获奖情况</td>' ;
+        str += '<td   style="width: 80px;">SCIA</td>' ;
+        str += '<td   style="width: 80px;">SCIB</td>' ;
+        str += '<td   style="width: 80px;">SCIC</td>' ;
+        str += '<td   style="width: 80px;">中华</td>' ;
+        str += '<td   style="width: 80px;">核心</td>' ;
+        str += '<td   style="width: 80px;">一般</td>' ;
+        str += '<td   style="width: 80px;">著作</td>' ;
+        str += '<td   style="width: 80px;">数量</td>' ;
+        str += '<td   style="width:80px;">主持国家级课题</td>' ;
+        str += '<td   style="width: 80px;">资助金额(万元)</td>' ;
+        str += '<td   style="width: 80px;">国家自然基金资助批准时间</td>' ;
+        str += '<td   style="width: 80px;">获奖名称</td>' ;
+        str += '<td   style="width: 80px;">等级</td>' ;
+        str += '<td   style="width: 80px;">排名</td>' ;
+        str += '</tr>';
+        $("#th").html(str);
+    }
+    /**
+     * 正高副高的tbody
+     * @param userInfos
+     */
+    function  genJson(userInfos) {
+        var str="";
+        for(var i=0;i<userInfos.length;i++) {
+             var userInfo=userInfos[i];
+            str += "<tr>";
+            str += '<td style="width: 60px;">'+handleStr(userInfo.confirmIndex)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.wchshuangbao)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.userAccount)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ks)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.userAccountName)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.birthdaystr)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sexName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.edu)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.eduDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.positionName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zygwDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.npPositionName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.schoolDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.iffuhebibei)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.yxryqk)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ylpfdj)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.ylpfbfz)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.mzylpfdj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.mzylpf)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.jxpfdj)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.jxpf)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.teachName)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.teachDengji)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.teachRanknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.schoolprizeName)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.schoolprizeDengji)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.schoolprizeRanknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.schoolprizeDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.courseDengji)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.courseRanknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.courseDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.youngName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.youngDengji)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.youngRanknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.youngDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publicarticle1)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publicarticle2)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciDjlb)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.sciDjfund)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciDjranknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciJflb)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciJffund)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciJfranknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishA)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishB)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishC)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishD)+'</td>';
+            str +=  '<td style="width: 80px;">'+addStr(userInfo.publishE,userInfo.publishF)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciName)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.sciDengji)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciRanknum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.patentNum)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.patentFund)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sblx)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.choosepos)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.ksrank)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.npqk)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.chuguonianyue)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zhiyuanchuguo)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.helpmonth)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.note)+'</td>';
+            str +=  '<td style="width: 280px;">'+handleStr(userInfo.dbxcgbs)+'</td>';
+            str += "</tr>";
+        }
+        $("#tb").html(str);
+    }
+    /**
+     * 中初级的tbody
+     * @param userInfos
+     */
+    function  genJson_zc(userInfos) {
+        var str="";
+        for(var i=0;i<userInfos.length;i++) {
+            var userInfo=userInfos[i];
+            str += "<tr>";
+            str += '<td style="width: 60px;">'+handleStr(userInfo.confirmIndex)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.userAccount)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.yuangongzu)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.xl)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ks)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.userAccountName)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.birthdaystr)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sexName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.positionName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zygwDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.npPositionName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.edu)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.eduDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.schoolDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zzbysj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.dzbysj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.bkbysj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ssbysj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.bsbysj)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ylpfdj)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.ylpfbfz)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.mzylpfdj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.mzylpf)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.jxpfdj)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.jxpf)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishA)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.publishB)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishC)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishD)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publishE)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publishF)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publicarticle1)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publicarticle2)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciDjlb)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.sciDjfund)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciDjranknum)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zyjszwzg)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.zyjszwzgsj)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zjspnlceqk)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.sblx)+'</td>';
+
+
+            str += "</tr>";
+        }
+        $("#tb").html(str);
+    }
+
+    /**
+     * 二三级的tbody
+     * @param userInfos
+     */
+    function  genJson_23(userInfos) {
+        var str="";
+        for(var i=0;i<userInfos.length;i++) {
+            var userInfo=userInfos[i];
+            str += "<tr>";
+            str += '<td style="width: 60px;">'+handleStr(userInfo.confirmIndex)+'</td>';
+            str +=  '<td style="width: 100px;">'+handleStr(userInfo.kslb)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.gwdj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ks)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.userAccount)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sexName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.userAccountName)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.birthdaystr)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.age)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.edu)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.eduDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.positionName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.zygwDate)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.xrgwjb)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.xrgwjbprsj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ifsyyltj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.rbdsj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.npPositionName)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.year)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.iffuhebibei)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.ifbxyltj)+'</td>';
+            str +=  '<td style="width: 150px;">'+handleStr(userInfo.mzsstjqkAudit)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.jxpfdj)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.j3nhxrlzypf)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.j3ylzhpf)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.j3nssztc)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.j3nzyszbrsl)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.j3nmzszbrsl)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.xjsxyw)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.xjsxywprize)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.dpsci20)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.dpsci10)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishA)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publishB)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishC)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publishD)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publishE)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publishF)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.publicarticle1)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.publicarticle2)+'</td>';
+
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciDjlb)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.sciDjfund)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciDjranknum)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciName)+'</td>';
+            str +=  '<td style="width: 80px;">'+handleStr(userInfo.sciDengji)+'</td>';
+            str += '<td style="width: 80px;">'+handleStr(userInfo.sciRanknum)+'</td>';
+
+            str += '<td style="width: 250px;">'+handleStr(userInfo.xhrzqk)+'</td>';
+            str +='<td style="width: 80px;">'+handleStr(userInfo.prize)+'</td>';
+
+            str += '<td style="width: 80px;">'+handleStr(userInfo.note)+'</td>';
+            str += "</tr>";
+        }
+        $("#tb").html(str);
+    }
+    function handleStr(obj) {
+       // console.info(obj);
+        if(obj==null||obj=='null'){
+            return '';
+        }
+        return obj.toString().replace(/#/g, "</br>");
+    }
+    function addStr(pE,pF) {
+        var dpE=0;
+        var dpF=0;
+        if(pE!='' && pE!='null' && pE!=null){
+            dpE =parseFloat(pE);
+        }
+        if(pF!=''&& pF!='null' && pF!=null){
+            dpF =parseFloat(pF);
+        }
+        return dpE+dpF;
+    }
+
+</script>
+</body>
+</html>

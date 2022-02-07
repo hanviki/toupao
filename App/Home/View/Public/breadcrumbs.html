@@ -1,0 +1,47 @@
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <ul class="breadcrumb">     
+            
+        <?php if($user['user_type'] == '1'){ ?>
+            <?php if(explode('/','Index/index')[0]==CONTROLLER_NAME){ ?>
+            <li class="active">
+            <?php }else{ ?>
+            <li>
+            <?php } ?>
+            <a href="{:U('index/index')}">                
+                <span class="menu-text">
+                    首页                         
+                </span>
+            </a>
+            <b class="arrow"></b>
+        </li>
+        <?php if(explode('/','Ping/index')[0]==CONTROLLER_NAME){ ?>
+        <li class="active">
+        <?php }else{ ?>
+        <li>
+        <?php } ?>
+        
+            <a href="{:U('Ping/add')}">                
+                <span class="menu-text">
+                    评委管理                         
+                </span>
+            </a>
+            <b class="arrow"></b>
+        </li>
+        <?php }else{ ?>
+        <li class="active">
+            <a href="{:U('Tpiao/index')}">                
+                <span class="menu-text">
+                    投票中心                         
+                </span>
+            </a>
+            <b class="arrow"></b>
+        </li>
+        <?php } ?>        
+    </ul><!-- /.nav-list -->
+    </div>

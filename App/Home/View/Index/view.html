@@ -1,0 +1,330 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+          ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="cf">                           
+                        </div>
+                        <div class="space-4"></div>
+                        <form id="form" method="post" action="">
+                            <input type="hidden" name="vote_id" value="{$getaid}" id="aid"/>
+                            <input type="hidden" name="round_id" value="{$getnid}" id="getnid"/>   
+                            <p style='margin-left: 75px;margin-bottom: 20px;color: #438eb9;float: left;' >当前投票查询
+                            <a href="{:U('guanli',array('vote_id'=>$getaid))}" style='margin-left: 20px;'>返回投票管理</a>
+                            
+                            <?php if($ispsfirst == '1'){ ?>
+                            <div class="cf" style="margin-left: 205px;float: left;">
+                                <input id="exportOrderResult" class="btn btn-info" type="button" value="按导入顺序导出">
+                                <input id="exportBallotResult" class="btn btn-info" type="button" value="按票数顺序导出">
+                                <input id="exportKeshiBallotResult" class="btn btn-info" type="button" value="按科室和票数顺序导出">
+                            </div>
+                            <?php } ?>
+                            
+                            </p>
+                            
+                            <div style="clear:both; width:0px; height:0px; font-size:0px; line-height:0px;"></div>
+                            
+                            <p style="">投票名称：{$votelunciinfo.vote_name}，
+                                评审类型：<if condition="$votelunciinfo['judgetype_id'] eq 1 ">学科组评审
+                                        <else />医院评审委员会评审
+                                        </if>
+                                ，当前轮次:第{$votelunciinfo['round']}轮。
+                            </p>
+                            
+                    <volist name="voteApplySetTable" id="voteApplyval" key='voteApplykey'>
+                    <?php if(!empty($voteApplyval['list'])){ ?>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>                                         
+                                        <th>序号</th>
+                                        <th>指标类型</th>
+                                        <th>姓名</th>
+                                        <th>申请职位</th>
+                                        <th>票数</th>    
+                                        <th>评审状态</th>
+                                        <th>评委详情</th>                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <volist name="voteApplyval['list']" id="val" key="k">
+                                    <tr>                                         
+                                        <td>{$k}</a></td>
+                                        <td>{$val['quota_log']}</td>   
+                                        <td>{$val['applicant_name']}</td>                                        
+                                        <td>
+                                            <?php if(empty($val['myson'])){ ?>
+                                            <p>{$val['apply_title']}</p>
+                                            <?php }else{ ?>
+                                            <volist name="val.myson" id="mo" key="no">
+                                            <p>{$mo['apply_title']}</p>
+                                            </volist>
+                                            <?php } ?>
+                                        </td>
+                                        <td>
+                                            <?php if(empty($val['myson'])){ ?>
+                                            <p>{$val['select_total']}</p>
+                                            <?php }else{ ?>
+                                            <volist name="val.myson" id="mo" key="no">
+                                            <if condition="$mo['is_passed'] eq 12 ">
+                                            <p>未通过</p>                                            
+                                            <else />
+                                            <p>{$mo['select_total']}</p>
+                                            </if>
+                                            </volist>
+                                            <?php } ?>
+                                        </td>
+                                        <td>
+                                        <?php if(empty($val['myson'])){ ?>
+                                        <p>
+                                        <if condition="$val['applicant_status'] eq 0 "><span>未通过</span> 
+                                        <elseif condition="$val['applicant_status'] eq 1 "/><span style="color: gray;">进入下一轮</span>
+                                        <elseif condition="$val['applicant_status'] eq 2 "/><span style="color: green;">评审通过</span>
+                                        <elseif condition="$val['applicant_status'] eq 3 "/><span>未通过</span> <!--医院委员会评审-->
+                                        <elseif condition="$val['applicant_status'] eq 4 "/><span style="color: gray;">进入下一轮</span> <!--医院委员会评审-->
+                                        <elseif condition="$val['applicant_status'] eq 5 "/><span style="color: green;">评审通过</span> <!--医院委员会评审-->
+                                        <else /> <span style="color: gray;">未知</span> 
+                                        </if>
+                                        </p>
+                                        <?php }else{ ?>
+                                        <volist name="val.myson" id="mo" key="no">
+                                        <?php if($mo['is_passed'] == '12'){ ?>
+                                        <p><span style="color: gray;">未通过前面轮次评审</span></p>
+                                        <?php }else if($mo['is_passed'] == '10'){ ?>
+                                        <p><span style="color: green;">评审通过</span></p>
+                                        <?php }else{ ?>
+                                            <p>                                                                                
+                                            <if condition="$mo['applicant_status'] eq 0 "><span>未通过</span>
+                                            <elseif condition="$mo['applicant_status'] eq 1 "/><span style="color: gray;">进入下一轮</span>
+                                            <elseif condition="$mo['applicant_status'] eq 2 "/><span style="color: green;">评审通过</span>
+                                            <elseif condition="$mo['applicant_status'] eq 3 "/>
+                                            <?php if($judgetype == '1'){ ?>
+                                            <span style="color: green;">评审通过</span> <!--学科组评审-->
+                                            <?php }else{ ?>
+                                            <span>未通过</span> <!--医院委员会评审-->
+                                            <?php } ?>
+                                            <elseif condition="$mo['applicant_status'] eq 4 "/><span style="color: gray;">进入下一轮</span><!--医院委员会评审-->
+                                            <elseif condition="$mo['applicant_status'] eq 5 "/><span style="color: green;">评审通过</span><!--医院委员会评审-->                                            
+                                            <else /> <span style="color: gray;">未知</span> 
+                                            </if>
+                                            </p>                                        
+                                        <?php } ?>                                        
+                                        </volist>
+                                        <?php } ?>
+                                        </td>
+                                        
+                                        <td>
+                                            <?php if(empty($val['myson'])){ ?>
+                                            <p><a href="{:U('view',array('rounddetail_id'=>$val['rounddetail_id'],'vote_id'=>$getaid,'round_id'=>$getnid))}"><i class="ace-icon fa fa-pencil bigger-100"></i>查询</a>&nbsp&nbsp;</p>
+                                            <?php }else{ ?>
+                                            <volist name="val.myson" id="mo" key="no">
+                                                <if condition="$mo['is_passed'] eq 11 ">
+                                                <p><a href="{:U('view',array('rounddetail_id'=>$mo['rounddetail_id'],'vote_id'=>$getaid,'round_id'=>$getnid))}"><i class="ace-icon fa fa-pencil bigger-100"></i>查询</a>&nbsp&nbsp;</p>
+                                                <else />
+                                                </if>
+                                            </volist>
+                                            <?php } ?>                                            
+                                        </td>
+                                    </tr>
+                                </volist>
+                                </tbody>
+                            </table>         
+                    <?php } ?>
+                </volist>                 
+                        </form>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+                
+                <?php if(!empty($voteApplyval)){ ?>
+                <div class="cf">
+                    <input id="exportRoundResult" class="btn btn-info" type="button" value="导出本轮最终结果">
+                    <input id="exportVoteDetail" class="btn btn-info" type="button" value="导出本轮评委投票信息">
+                </div>
+                <?php } ?>
+                
+                <?php if(!empty($shenlist)){ ?>
+                <div class="row">
+                    <div class="col-xs-4">                        
+                        <div class="space-4"></div>    
+                        <p style='margin-left: 75px;margin-bottom: 20px;color: #438eb9;margin-top: 20px;' >申请人信息</p>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>申请人姓名</th>  
+                                        <th>申请职位</th>  
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <tr>                                         
+                                        <td>{$shengqingren.applicant_name}</a></td>
+                                        <td>{$shengqingren.apply_title}</td>
+                                    </tr>
+                                </tbody>
+                            </table>  
+                        <p style='margin-left: 75px;margin-bottom: 20px;color: #438eb9;margin-top: 20px;' >评委详情</p>
+                            <table class="table table-striped table-bordered">
+                                <thead>                                    
+                                </thead>
+                                <tbody> 
+                                    <tr>                                         
+                                        <td>评委名称</a></td>
+                                        <volist name="shenlist" id="val">
+                                            <td>{$val['judge_name']}</td>  
+                                        </volist>
+                                    </tr>
+                                </tbody>
+                            </table>  
+                    </div>
+                </div>
+                <?php } ?>
+                
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+</div><!-- /.main-container -->
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(function () {
+        $(".check-all").click(function () {
+            $(".aids").prop("checked", this.checked);
+        });
+        $(".aids").click(function () {
+            var option = $(".ids");
+            option.each(function (i) {
+                if (!this.checked) {
+                    $(".check-all").prop("checked", false);
+                    return false;
+                } else {
+                    $(".check-all").prop("checked", true);
+                }
+            });
+        });        
+    })
+    
+    $("#exportRoundResult").click(function () {
+        bootbox.confirm({
+            title: "系统提示",
+            message: "是否导出本轮最终结果？",
+            callback: function (result) {
+                if (result) {
+                    var newUrl = "{:U('exportRoundResult')}";    //设置新提交地址
+                    $("#form").attr('action',newUrl);
+                    $("#form").submit();
+                }
+            },
+            buttons: {
+                "cancel": {"label": "取消"},
+                "confirm": {
+                    "label": "确定",
+                    "className": "btn-danger"
+                }
+            }
+        });
+    });
+    
+    $("#exportVoteDetail").click(function () {
+        bootbox.confirm({
+            title: "系统提示",
+            message: "是否导出本轮评委投票信息？",
+            callback: function (result) {
+                if (result) {
+                    var newUrl = "{:U('exportVoteDetail')}";    //设置新提交地址
+                    $("#form").attr('action',newUrl);
+                    $("#form").submit();
+                }
+            },
+            buttons: {
+                "cancel": {"label": "取消"},
+                "confirm": {
+                    "label": "确定",
+                    "className": "btn-danger"
+                }
+            }
+        });
+    });
+     
+    $("#exportOrderResult").click(function () {
+        bootbox.confirm({
+            title: "系统提示",
+            message: "是否按照导出顺序导出投票信息？",
+            callback: function (result) {
+                if (result) {
+                    var newUrl = "{:U('orderdao')}";    //设置新提交地址
+                    $("#form").attr('action',newUrl);
+                    $("#form").submit();
+                }
+            },
+            buttons: {
+                "cancel": {"label": "取消"},
+                "confirm": {
+                    "label": "确定",
+                    "className": "btn-danger"
+                }
+            }
+        });
+    });
+    
+    $("#exportBallotResult").click(function () {
+        bootbox.confirm({
+            title: "系统提示",
+            message: "是否按照票数导出投票信息？",
+            callback: function (result) {
+                if (result) {
+                    var newUrl = "{:U('ballotdao')}";    //设置新提交地址
+                    $("#form").attr('action',newUrl);
+                    $("#form").submit();
+                }
+            },
+            buttons: {
+                "cancel": {"label": "取消"},
+                "confirm": {
+                    "label": "确定",
+                    "className": "btn-danger"
+                }
+            }
+        });
+    });
+
+    $("#exportKeshiBallotResult").click(function () {
+        bootbox.confirm({
+            title: "系统提示",
+            message: "是否按照科室和票数导出投票信息？",
+            callback: function (result) {
+                if (result) {
+                    var newUrl = "{:U('keshiballotdao')}";    //设置新提交地址
+                    $("#form").attr('action',newUrl);
+                    $("#form").submit();
+                }
+            },
+            buttons: {
+                "cancel": {"label": "取消"},
+                "confirm": {
+                    "label": "确定",
+                    "className": "btn-danger"
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<include file="Public/head"/>
+
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="cf">                            
+                        </div>
+                        <div class="space-4"></div>                       
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>                                        
+                                        <th>所属组别</th>
+                                        <th class="col-xs-3">投票名称</th>
+                                        <th class="col-xs-1">轮次</th>
+                                        <th>开始时间</th>
+                                        <th>结束时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <volist name="list" id="val">
+                                    <tr>                                        
+                                        <td>{$val['category_name']}</a></td>
+                                        <td>{$val['vote_name']}</td>
+                                        <td>{$val['round']}</td>
+                                        <td>{$val['start_t']|date="Y-m-d H:i:s",###}</td>
+                                        <if condition="$val['end_t'] eq 0 "><td>无</td>
+                                        <else /> <td>{$val['end_t']|date="Y-m-d H:i:s",###}</td>
+                                        </if>
+                                        <if condition="$val['round_status'] eq 0 "><td style="color: green;"><a href="{:U('toupiao',array('vote_id'=>$val['vote_id'],'round_id'=>$val['round_id']))}"><i class="ace-icon fa fa-pencil bigger-100"></i>进入投票</a></td>
+                                        <else /> <td>已结束</td>
+                                        </if>
+                                    </tr>
+                                </volist>
+                                </tbody>
+                            </table>                       
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(function () {
+        $(".check-all").click(function () {
+            $(".aids").prop("checked", this.checked);
+        });
+        $(".aids").click(function () {
+            var option = $(".ids");
+            option.each(function (i) {
+                if (!this.checked) {
+                    $(".check-all").prop("checked", false);
+                    return false;
+                } else {
+                    $(".check-all").prop("checked", true);
+                }
+            });
+        });         
+    })
+</script>
+</body>
+</html>
