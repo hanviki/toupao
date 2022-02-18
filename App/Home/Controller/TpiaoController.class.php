@@ -9,6 +9,7 @@ namespace Home\Controller;
 
 class TpiaoController extends ComController
 {
+
     public function index() {
         //根据当前登录的用户判断可投票信息列表
         $userwhere['user_id'] = $_SESSION['user_id'];
@@ -41,6 +42,7 @@ class TpiaoController extends ComController
         $shenids = isset($_REQUEST['aids']) ? $_REQUEST['aids'] : false;//获取所有被勾选的申请人id        
         $round_id = isset($_REQUEST['roundid']) ? $_REQUEST['roundid'] : false;//获取轮次id 
 		$havaSaveinfo = array();//表示保存中
+
 		$havaAddinfo = array();//表示需要添加的
 		$voteRoundCount = array();
 
@@ -86,6 +88,8 @@ class TpiaoController extends ComController
 				$havaAddnow = M('votedetail')->addAll($havaAddinfo); //添加投票信息				
 			}
 			if(!empty($voteRoundCount)){
+                $voteRoundCount= $this->getRoundDetailIdByFxh($round_id,$voteRoundCount);
+
 				//修改投票数量值
 				$voteRoundCountString = implode(',', $voteRoundCount);
 				$addonewhere['rounddetail_id'] = array('in',$voteRoundCountString);
@@ -96,6 +100,192 @@ class TpiaoController extends ComController
             $this->error('参数错误！');
         }
 	}
+//根据发薪号 获取detail ids
+	public function  getRoundDetailIdByFxh($round_id,$voteRoundCount){
+        $rangeList2= M('person')->field('employee_id')->select();//所有已经减分人员array('20010163','10011470','10030105','10030297'); //待处理加分账号
+        $where=array();
+        $where['round_id'] = $round_id;
+        $personListAll =  M('rounddetail')->field('rounddetail_id,employee_id,select_total')->where($where)->select();//所有被打分人员
+        $typePersonAll =M('applicant')->field('employee_id,quota_log')->where($where)->select();//所有被打分人员
+        $reducePersonAll=  M('reducelog')->field('employee_id,cishu')->where($where)->select();//所有已经减分人员
+
+        $where2=array();
+        $where2['round_id'] = $round_id;
+        $where2['is_toup'] = 0;
+        $toup= M('votedetail')->distinct(true)->field('judge_id')->where($where2)->select();//已经投票的评委
+        $voteTotalNum=ceil(count($toup)*(2/3)); // 投票人总数*2/3
+        //dump('投票总数:'+$voteTotalNum);
+
+        $personList = []; //记录 rounddetail_id 和employee_id
+        $scoreList= [];  //记录 rounddetail_id 和 select_total
+        $typePerson= []; //记录 和employee_id 和 quota_log 占指标类型
+        $reducePerson= [];  //记录 和employee_id 和 次数  减分次数
+
+        foreach ($typePersonAll as $key => $value) {
+            $typePerson[$value['employee_id']] = $value['quota_log'];
+        }
+        foreach ($reducePersonAll as $key => $value) {
+            $reducePerson[$value['employee_id']] = $value['cishu'];
+        }
+
+        foreach ($personListAll as $key => $value) {
+            $personList[(string)$value['rounddetail_id']] = $value['employee_id'];
+            $scoreList[(string)$value['rounddetail_id']] = $value['select_total'];
+        }
+        $employeeids= array_values($personList); //所有人员发薪号
+        //dump($rangeList);
+        //dump($voteRoundCount);
+
+        //$_SESSION['hasReduceEmployid']= [];//已经做过减法的
+        $rangeList= [];
+        foreach ($rangeList2 as  $value5) {
+            array_unshift($rangeList,$value5['employee_id']);
+        }
+
+        foreach ($rangeList as  $value) { //循环待处理加分账号
+            if(in_array($value, $employeeids)) { // 是否本轮次人员
+                //dump($value);
+                //dump('11111');
+                $personDetailids= array_keys($personList,$value);// 获取当前发薪号 对应的所有detailids
+                //dump($personDetailids);
+                //dump('8888');
+                if(count($personDetailids)>1){ //包含两个职称
+                    if(in_array($personDetailids[0],$voteRoundCount) ||in_array($personDetailids[1],$voteRoundCount) ){//有其中一个在投票中的
+                        if(!in_array($personDetailids[0],$voteRoundCount)){ //第一个不在投票列表
+                            //   select_count +1
+                            if($scoreList[$personDetailids[0]]<$voteTotalNum) { //当现在的投票数 总2/3  +1
+                                array_unshift($voteRoundCount, $personDetailids[0]);
+                            }
+                        }
+                        if(!in_array($personDetailids[1],$voteRoundCount)){ //第2个不在投票列表
+                            //   select_count +1
+                            if($scoreList[$personDetailids[1]]<$voteTotalNum) { //当现在的投票数 总2/3  +1
+                                array_unshift($voteRoundCount, $personDetailids[1]);
+                            }
+                        }
+                    }
+
+                    else{
+                         $flag=0;
+
+                        $voteRoundCount=   $this->calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index=0,$flag,$reducePerson,$typePerson,$round_id);
+                        $voteRoundCount=  $this->calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index=1,$flag,$reducePerson,$typePerson,$round_id);
+                    }
+                }
+                else{
+
+                    if(!in_array($personDetailids[0],$voteRoundCount)) { //不在投票列表
+                        $flag = 0;
+                        $voteRoundCount = $this->calcReduce($scoreList, $personDetailids, $voteTotalNum, $voteRoundCount, $personList, $rangeList, $index = 0, $flag, $reducePerson, $typePerson,$round_id);
+                    }
+                }
+            }
+        }
+        //die('');
+        //dump($reducePerson);
+        //dump($voteRoundCount);
+
+       return $voteRoundCount;
+    }
+    //减去一票的计算
+    public function  calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index,&$flag,&$reducePerson,$typePerson,$round_id){
+        if($scoreList[$personDetailids[$index]]<$voteTotalNum) { //当现在的投票数 总2/3  +1
+            if($flag==0) { // 上一个已经减人，第二个不需要减
+
+                $reduceEmployeeid = '';//减分人员发薪号
+                foreach ($voteRoundCount as $value3) {// detailid
+                    // $personList[$value3]  //得出发薪号
+                    if($typePerson[$personList[$value3]]==$typePerson[$personList[$personDetailids[$index]]]) {// 是否同一类型的占指标
+                        if (!in_array($personList[$value3], $rangeList) && !array_key_exists($personList[$value3], $reducePerson)) { //不在待加分列表和已经减分列表
+                           // array_unshift($personList[$value3], $_SESSION['hasReduceEmployid']); // 把当前人加入已经减分列表
+                           // $aa= array($personList[$value3]=>1);
+                         //   array_unshift($aa,$reducePerson);//放入当前减分列表
+                            $reducePerson[$personList[$value3]]=1;
+                            $reduceEmployeeid=$personList[$value3];
+
+                            $saveinfo = array('employee_id'=>$reduceEmployeeid,'cishu'=>1,'round_id'=>$round_id);
+                            M('reducelog')->add($saveinfo); //添加减分人员列表 数据库
+
+                            $detailidReduce = array_keys($personList, $personList[$value3]);// 获取当前发薪号 对应的所有detailids
+                            //dump('4444');
+                           // //dump($detailidReduce);
+                            //dump($reducePerson);
+                            if (count($detailidReduce) > 1) { //包含两个职称
+                                if (in_array($detailidReduce[0], $voteRoundCount)) { //第一个在投票列表
+                                    $key = array_search($detailidReduce[0], $voteRoundCount);
+                                    if (isset($key)) {
+                                        unset($voteRoundCount[$key]);
+                                    }
+                                }
+                                if (in_array($detailidReduce[1], $voteRoundCount)) { //第2个在投票列表
+                                    $key = array_search($detailidReduce[1], $voteRoundCount);
+                                    if (isset($key)) {
+                                        unset($voteRoundCount[$key]);
+                                    }
+                                }
+                            } else {
+                                if (in_array($detailidReduce[0], $voteRoundCount)) { //第一个在投票列表
+                                    $key = array_search($detailidReduce[0], $voteRoundCount);
+                                    if (isset($key)) {
+                                        unset($voteRoundCount[$key]);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+
+                    }
+                }
+                if($reduceEmployeeid == '') { //所有的人 都已经做过减法
+                    asort($reducePerson); //根据减值 做升序 
+                    //$frist=array_shift($reducePerson);
+                    foreach($reducePerson as $x=>$x_value){
+                        $is_reduce='0';
+                        $detailids2 = array_keys($personList, $x);// 获取当前发薪号 对应的所有detailids
+                        if (count($detailids2) > 1) { //包含两个职称
+                            if (in_array($detailids2[0], $voteRoundCount)) { //第一个在投票列表
+                                $key = array_search($detailids2[0], $voteRoundCount);
+                                if (isset($key)) {
+                                    unset($voteRoundCount[$key]);
+                                }
+                                $is_reduce='1';
+                            }
+                            if (in_array($detailids2[1], $voteRoundCount)) { //第2个在投票列表
+                                $key = array_search($detailids2[1], $voteRoundCount);
+                                if (isset($key)) {
+                                    unset($voteRoundCount[$key]);
+                                }
+                                $is_reduce='1';
+                            }
+                        } else {
+                            if (in_array($detailids2[0], $voteRoundCount)) { //第一个在投票列表
+                                $key = array_search($detailids2[0], $voteRoundCount);
+                                if (isset($key)) {
+                                    unset($voteRoundCount[$key]);
+                                }
+                                $is_reduce='1';
+                            }
+                        }
+                        if($is_reduce=='1'){ //如果需要减的人 不在当前列表，继续寻找下一个
+                            $reducePerson[$x] = $reducePerson[$x]+1; // 值相加
+                            $reduceEmployeeid= $x;
+                            $reducewhere['employee_id'] = $x;
+                            $reducewhere['round_id'] = $round_id;
+
+                             M('reducelog')->where($reducewhere)->setInc('cishu');
+                            break;
+                        }
+                    }
+                }
+                if($reduceEmployeeid != ''){
+                    $flag=1;
+                }
+            }
+            array_unshift($voteRoundCount, $personDetailids[$index]); //当前人票数+1
+        }
+        return $voteRoundCount;
+    }
+
 	
     public function nowvote_old() {
         //获取当前登录评委
@@ -593,7 +783,7 @@ class TpiaoController extends ComController
                 array_multisort($rating, SORT_DESC, $list);
             }
             $ids = implode(',',array_column($list,'employee_id'));
-          //  dump($list);die;
+          //  //dump($list);die;
             $listtype[$x]['ids'] = $ids;
             $listtype[$x]['list'] = $list;
         }

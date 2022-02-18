@@ -163,15 +163,15 @@
         var userAccount =$("#user_id").val();
         var ids =$("#ids").val();
         var url= "https://whuhhrmapi.asclepius.whxh.com.cn/dcaBReport/user";
-        get_head_23();
+        get_head_zc();
         $.ajaxSetup({async: false});
         $.post(url,{
             ids: ids
         },function(json){
             console.log(json);
-            genJson_23(json);
+            genJson_zc(json);
             setTimeout(function () {
-                handleColor_23(userAccount);
+                handleColor_zc(userAccount);
             },500);
         });
         $.ajaxSetup({async: true});
