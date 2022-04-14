@@ -102,7 +102,7 @@ class TpiaoController extends ComController
 	}
 //根据发薪号 获取detail ids
 	public function  getRoundDetailIdByFxh($round_id,$voteRoundCount){
-        $rangeList2= M('person')->field('employee_id')->select();//所有已经减分人员array('20010163','10011470','10030105','10030297'); //待处理加分账号
+        $rangeList2= M('person')->field('employee_id')->select();//待处理加分账号
         $where=array();
         $where['round_id'] = $round_id;
         $personListAll =  M('rounddetail')->field('rounddetail_id,employee_id,select_total')->where($where)->select();//所有被打分人员
@@ -113,7 +113,12 @@ class TpiaoController extends ComController
         $where2['round_id'] = $round_id;
         $where2['is_toup'] = 0;
         $toup= M('votedetail')->distinct(true)->field('judge_id')->where($where2)->select();//已经投票的评委
-        $voteTotalNum=ceil(count($toup)*(2/3)); // 投票人总数*2/3
+        if(count($toup)<=4){
+            $voteTotalNum =0;
+        }
+        else {
+            $voteTotalNum = ceil(count($toup) * (2 / 3)); // 投票人总数*2/3
+        }
         //dump('投票总数:'+$voteTotalNum);
 
         $personList = []; //记录 rounddetail_id 和employee_id
@@ -193,7 +198,7 @@ class TpiaoController extends ComController
             if($flag==0) { // 上一个已经减人，第二个不需要减
 
                 $reduceEmployeeid = '';//减分人员发薪号
-                foreach ($voteRoundCount as $value3) {// detailid
+                foreach ($voteRoundCount as $value3) {// detailid 遍历所有被选选择打分的50个人
                     // $personList[$value3]  //得出发薪号
                     if($typePerson[$personList[$value3]]==$typePerson[$personList[$personDetailids[$index]]]) {// 是否同一类型的占指标
                         if (!in_array($personList[$value3], $rangeList) && !array_key_exists($personList[$value3], $reducePerson)) { //不在待加分列表和已经减分列表
