@@ -88,6 +88,8 @@ class TpiaoController extends ComController
 				$havaAddnow = M('votedetail')->addAll($havaAddinfo); //添加投票信息				
 			}
 			if(!empty($voteRoundCount)){
+
+
                 $voteRoundCount= $this->getRoundDetailIdByFxh($round_id,$voteRoundCount);
 
 				//修改投票数量值
@@ -100,6 +102,26 @@ class TpiaoController extends ComController
             $this->error('参数错误！');
         }
 	}
+
+	public function getVoteNumber($voteRoundCount){
+        $voteRoundCountString = implode(',', $voteRoundCount);
+        $addonewhere['rounddetail_id'] = array('in',$voteRoundCountString);
+        $rounddetailsaddone = M('rounddetail')->field('rounddetail_id')->where($addonewhere)->order('select_total desc')->select();
+        return $rounddetailsaddone;
+    }
+
+	public function  getReducePerson($round_id){
+
+        $where=array();
+        $where['round_id'] = $round_id;
+        $reducePersonAll=  M('reducelog')->field('employee_id,cishu')->where($where)->select();//所有已经减分人员
+        $reducePerson= [];  //记录 和employee_id 和 次数  减分次数
+        foreach ($reducePersonAll as $key => $value) {
+            $reducePerson[$value['employee_id']] = $value['cishu'];
+        }
+        return $reducePerson;
+    }
+
 //根据发薪号 获取detail ids
 	public function  getRoundDetailIdByFxh($round_id,$voteRoundCount){
         $rangeList2= M('person')->field('employee_id')->select();//待处理加分账号
@@ -107,6 +129,8 @@ class TpiaoController extends ComController
         $where['round_id'] = $round_id;
         $personListAll =  M('rounddetail')->field('rounddetail_id,employee_id,select_total')->where($where)->select();//所有被打分人员
         $typePersonAll =M('applicant')->field('employee_id,quota_log')->where($where)->select();//所有被打分人员
+        //M()->startTrans();//开启事务
+       // M('reducelog')->lock(true).find();
         $reducePersonAll=  M('reducelog')->field('employee_id,cishu')->where($where)->select();//所有已经减分人员
 
         $where2=array();
@@ -124,14 +148,14 @@ class TpiaoController extends ComController
         $personList = []; //记录 rounddetail_id 和employee_id
         $scoreList= [];  //记录 rounddetail_id 和 select_total
         $typePerson= []; //记录 和employee_id 和 quota_log 占指标类型
-        $reducePerson= [];  //记录 和employee_id 和 次数  减分次数
+      //  $reducePerson= [];  //记录 和employee_id 和 次数  减分次数
 
         foreach ($typePersonAll as $key => $value) {
             $typePerson[$value['employee_id']] = $value['quota_log'];
         }
-        foreach ($reducePersonAll as $key => $value) {
-            $reducePerson[$value['employee_id']] = $value['cishu'];
-        }
+//        foreach ($reducePersonAll as $key => $value) {
+////            $reducePerson[$value['employee_id']] = $value['cishu'];
+////        }
 
         foreach ($personListAll as $key => $value) {
             $personList[(string)$value['rounddetail_id']] = $value['employee_id'];
@@ -173,15 +197,15 @@ class TpiaoController extends ComController
                     else{
                          $flag=0;
 
-                        $voteRoundCount=   $this->calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index=0,$flag,$reducePerson,$typePerson,$round_id);
-                        $voteRoundCount=  $this->calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index=1,$flag,$reducePerson,$typePerson,$round_id);
+                        $voteRoundCount=   $this->calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index=0,$flag,$typePerson,$round_id);
+                        $voteRoundCount=  $this->calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index=1,$flag,$typePerson,$round_id);
                     }
                 }
                 else{
 
                     if(!in_array($personDetailids[0],$voteRoundCount)) { //不在投票列表
                         $flag = 0;
-                        $voteRoundCount = $this->calcReduce($scoreList, $personDetailids, $voteTotalNum, $voteRoundCount, $personList, $rangeList, $index = 0, $flag, $reducePerson, $typePerson,$round_id);
+                        $voteRoundCount = $this->calcReduce($scoreList, $personDetailids, $voteTotalNum, $voteRoundCount, $personList, $rangeList, $index = 0, $flag, $typePerson,$round_id);
                     }
                 }
             }
@@ -190,17 +214,23 @@ class TpiaoController extends ComController
         //dump($reducePerson);
         //dump($voteRoundCount);
 
+      //  M()->commit();//事务提交
        return $voteRoundCount;
     }
     //减去一票的计算
-    public function  calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index,&$flag,&$reducePerson,$typePerson,$round_id){
+    public function  calcReduce($scoreList,$personDetailids,$voteTotalNum,$voteRoundCount,$personList,$rangeList,$index,&$flag,$typePerson,$round_id){
         if($scoreList[$personDetailids[$index]]<$voteTotalNum) { //当现在的投票数 总2/3  +1
             if($flag==0) { // 上一个已经减人，第二个不需要减
 
                 $reduceEmployeeid = '';//减分人员发薪号
+
+
+               // $rounddetailsaddone= getReducePerson($voteRoundCount);//  按分数多少排序
                 foreach ($voteRoundCount as $value3) {// detailid 遍历所有被选选择打分的50个人
                     // $personList[$value3]  //得出发薪号
                     if($typePerson[$personList[$value3]]==$typePerson[$personList[$personDetailids[$index]]]) {// 是否同一类型的占指标
+
+                        $reducePerson =$this->getReducePerson($round_id);
                         if (!in_array($personList[$value3], $rangeList) && !array_key_exists($personList[$value3], $reducePerson)) { //不在待加分列表和已经减分列表
                            // array_unshift($personList[$value3], $_SESSION['hasReduceEmployid']); // 把当前人加入已经减分列表
                            // $aa= array($personList[$value3]=>1);
@@ -242,6 +272,7 @@ class TpiaoController extends ComController
                     }
                 }
                 if($reduceEmployeeid == '') { //所有的人 都已经做过减法
+                    $reducePerson =$this->getReducePerson($round_id);
                     asort($reducePerson); //根据减值 做升序 
                     //$frist=array_shift($reducePerson);
                     foreach($reducePerson as $x=>$x_value){
@@ -272,7 +303,7 @@ class TpiaoController extends ComController
                             }
                         }
                         if($is_reduce=='1'){ //如果需要减的人 不在当前列表，继续寻找下一个
-                            $reducePerson[$x] = $reducePerson[$x]+1; // 值相加
+                          //  $reducePerson[$x] = $reducePerson[$x]+1; // 值相加
                             $reduceEmployeeid= $x;
                             $reducewhere['employee_id'] = $x;
                             $reducewhere['round_id'] = $round_id;
