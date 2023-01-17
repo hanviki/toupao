@@ -137,7 +137,7 @@ class TpiaoController extends ComController
         $where2['round_id'] = $round_id;
         $where2['is_toup'] = 0;
         $toup= M('votedetail')->distinct(true)->field('judge_id')->where($where2)->select();//已经投票的评委
-        if(count($toup)<=4){
+        if(count($toup)<=2){
             $voteTotalNum =0;
         }
         else {
